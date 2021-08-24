@@ -78,7 +78,7 @@ class BannerController extends Controller {
             $banner->title = $request->banner_title;
             if($request->hasFile('banner_image')) {
                 // Generate new unique file name
-                $newFileName = 'banner-'.rand(1000000,9999999).'-'.$request->file('banner_image')->getClientOriginalName();
+                $newFileName = 'banner-'.rand(1000000, 9999999).'-'.$request->file('banner_image')->getClientOriginalName();
                 // Store file
                 $banner->image_path = $request->file('banner_image')->storeAs('images/banner', $newFileName, 'public');
             }
@@ -110,7 +110,7 @@ class BannerController extends Controller {
                 // Old file path
                 $oldFile = $banner->image_path;
                 // Generate new unique file name
-                $newFileName = 'banner-'.rand(1000000,9999999).'-'.$request->file('banner_image')->getClientOriginalName();
+                $newFileName = 'banner-'.rand(1000000, 9999999).'-'.$request->file('banner_image')->getClientOriginalName();
                 // Store file
                 $banner->image_path = $request->file('banner_image')->storeAs('images/banner', $newFileName, 'public');
                 // Delete old file from server

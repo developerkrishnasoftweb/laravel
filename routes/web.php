@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ProfileController;
 |
 */
 
+// Admin routes
 Route::prefix('admin')->middleware(['auth'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
@@ -54,4 +55,9 @@ Route::middleware(['guest'])->group(function() {
     Route::post('/forgot', [AuthController::class, 'sendForgotPasswordEmail'])->name('admin.forgot.email');
     Route::get('/reset/{token}', [AuthController::class, 'resetPassword'])->name('admin.password.reset');
     Route::post('/reset', [AuthController::class, 'changePassword'])->name('admin.password.update');
+});
+
+// Website routes
+Route::get('/', function() {
+    return redirect()->route('admin.dashboard');
 });

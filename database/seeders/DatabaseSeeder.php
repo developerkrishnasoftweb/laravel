@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Navbar;
 
 class DatabaseSeeder extends Seeder {
     /**
@@ -13,7 +11,9 @@ class DatabaseSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        User::factory()->create();
-        Navbar::factory()->create();
+        $this->call([
+            UserSeeder::class,
+            NavbarSeeder::class,
+        ]);
     }
 }

@@ -41,7 +41,7 @@ class ProfileController extends Controller {
                 // Old file path
                 $oldFile = $user->profile_image;
                 // Generate new unique file name
-                $newFileName = 'user-'.rand(1000000,9999999).'-'.$request->file('profile_image')->getClientOriginalName();
+                $newFileName = 'user-'.rand(1000000, 9999999).'-'.$request->file('profile_image')->getClientOriginalName();
                 // Store file
                 $user->profile_image = $request->file('profile_image')->storeAs('images/user', $newFileName, 'public');
                 // Delete old file from server
