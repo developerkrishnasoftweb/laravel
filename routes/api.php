@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BannerApi;
+use App\Http\Controllers\Api\TestimonialApi;
+use App\Http\Controllers\Api\AuthApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Authenticate routes
+Route::post('/login', [AuthApi::class, 'login']);
+
+// APIs
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/banners', [BannerApi::class, 'index']);
+    Route::get('/testimonials', [TestimonialApi::class, 'index']);
 });
