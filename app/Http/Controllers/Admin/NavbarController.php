@@ -8,9 +8,8 @@ use App\Models\Navbar;
 
 class NavbarController extends Controller {
     /**
-     * Render navbar page.
+     * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     function index(Request $request) {
@@ -19,24 +18,7 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Show navbar page.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Integer  $id
-     * @return \Illuminate\Http\Response
-     */
-    function show(Request $request, $id) {
-        try {
-            $navbar = Navbar::findOrFail($request->id);
-            $navbars = Navbar::where('parent_nav_id', $request->id)->paginate(20);
-            return view('admin.pages.navbar.submenu', ['navbars' => $navbars, 'navbar' => $navbar]);
-        } catch(Exception $e) {
-            abort(404);
-        }
-    }
-
-    /**
-     * Filter navbar data.
+     * Filter data of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -53,7 +35,24 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Get navbars data
+     * Show a spe
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Integer  $id
+     * @return \Illuminate\Http\Response
+     */
+    function show(Request $request, $id) {
+        try {
+            $navbar = Navbar::findOrFail($request->id);
+            $navbars = Navbar::where('parent_nav_id', $request->id)->paginate(20);
+            return view('admin.pages.navbar.submenu', ['navbars' => $navbars, 'navbar' => $navbar]);
+        } catch(Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Get the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -78,7 +77,7 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Store navbars.
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -106,7 +105,7 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Update navbars.
+     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -135,7 +134,7 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Update navbar status.
+     * Update the status of resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -156,12 +155,12 @@ class NavbarController extends Controller {
     }
 
     /**
-     * Delete navbars.
+     * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function delete(Request $request) {
+    public function destroy(Request $request) {
         try {
             $request->validate([
                 'id' => 'required',

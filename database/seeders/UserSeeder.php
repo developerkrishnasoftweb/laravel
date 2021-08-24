@@ -14,7 +14,12 @@ class UserSeeder extends Seeder {
      */
     public function run() {
         User::factory()
-            ->has(Role::factory())
+            ->hasRoles(1)
             ->create();
+        Role::factory()->create([
+            'role' => 'user',
+            'description' => 'Customer',
+            'status' => 'y'
+        ]);
     }
 }

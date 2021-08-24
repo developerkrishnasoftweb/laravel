@@ -42,11 +42,16 @@
           @php
             $navbars = DB::table('navbars')->where('parent_nav_id', 0)->get();
             foreach($navbars as $navmenu) {
+              // Check any submenu is active or not
+              $navmenu->isActive = request()->is(trim($navmenu->url, '/')) || request()->is(trim($navmenu->url, '/').'/*');
               $navmenu->submenu = DB::table('navbars')->where('parent_nav_id', $navmenu->id)->get();
               foreach($navmenu->submenu as $submenu) {
+                // Check submenu is active or not
                 $submenu->isActive = request()->is(trim($submenu->url, '/')) || request()->is(trim($submenu->url, '/').'/*');
+                if($submenu->isActive == true) {
+                  $navmenu->isActive = true;
+                }
               }
-              $navmenu->isActive = request()->is(trim($navmenu->url, '/')) || request()->is(trim($navmenu->url, '/').'/*');
             }
           @endphp
 

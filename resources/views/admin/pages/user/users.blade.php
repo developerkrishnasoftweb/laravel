@@ -7,12 +7,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Banners</h1>
+            <h1>Users</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-              <li class="breadcrumb-item active">Banners</li>
+              <li class="breadcrumb-item active">Users</li>
             </ol>
           </div>
         </div>
@@ -26,34 +26,50 @@
           <!-- left column -->
           <div class="col-md-12">
             <!-- jquery validation -->
-            <div class="card card-primary" id="banner-form-container" style="display:none">
+            <div class="card card-primary" id="user-form-container" style="display:none">
               <div class="card-header">
-                <h4 class="card-title" id="banner-form-title">Add Banner</h4>
+                <h4 class="card-title" id="user-form-title">Add User</h4>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form" id="banner-form" enctype="multipart/form-data">
+              <form role="form" id="user-form" enctype="multipart/form-data">
                 @csrf
                 <input type="text" name="id" id="id" value="" hidden>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="banner_title">Banner Title</label>
-                        <input type="text" name="banner_title" class="form-control" id="banner_title" placeholder="Enter banner title">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" id="full_name" placeholder="Enter user full name">
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="banner_image">Banner Image</label>
-                        <img src="" id="banner-image-preview" style="display:none; height: 50px;"/>
-                        <input type="file" class="form-control" name="banner_image" id="banner_image" onchange="validateImageFile(this)" accept="image/*">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter user email">
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="position">Position</label>
-                        <input type="number" name="position" class="form-control" id="position" placeholder="Enter position">
+                        <label for="roles">User Role</label>
+                        <select name="roles[]" class="form-control" id="roles" multiple>
+                          @foreach($roles as $row)
+                            <option value="{{ $row->id }}">{{ $row->role }}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Enter user password">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="profile_image">User Image</label>
+                        <img src="" id="profile-image-preview" style="display:none; height: 50px;"/>
+                        <input type="file" class="form-control" name="profile_image" id="profile_image" onchange="validateImageFile(this)" accept="image/*">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -70,26 +86,26 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <button type="submit" class="btn btn-primary m-1">Submit</button>
-                  <button type="button" class="btn btn-danger m-1" id="close-banner-btn">Cancel</button>
+                  <button type="button" class="btn btn-danger m-1" id="close-user-btn">Cancel</button>
                 </div>
               </form>
             </div>
             <!-- /.card -->
 
-            <div class="card" id="banner-data-container">
+            <div class="card" id="user-data-container">
               <div class="card-header">
-                <h3 class="card-title">Manage Banners</h3>
+                <h3 class="card-title">Manage Users</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-6 col-md-6">
-                    <button class="btn btn-primary" id="add-banner-btn"><i class="fa fa-plus"></i> Add Banner</button>
-                    <button class="btn btn-danger" id="delete-selected-btn" style="display: none" data-toggle="modal" data-target="#modal-delete-banner"><i class="fa fa-trash"></i> Delete</button>
+                    <button class="btn btn-primary" id="add-user-btn"><i class="fa fa-plus"></i> Add User</button>
+                    <button class="btn btn-danger" id="delete-selected-btn" style="display: none" data-toggle="modal" data-target="#modal-delete-user"><i class="fa fa-trash"></i> Delete</button>
                   </div>
                   <div class="col-md-4"></div>
                   <div class="col-md-2">
-                    <form method="get" action="{{ route('admin.banner.filter') }}">
+                    <form method="get" action="{{ route('admin.user.filter') }}">
                       <input type="text" name="q" class="form-control" id="product_name" placeholder="Search..." value="{{ request()->q }}">
                     </form>
                   </div>
@@ -101,29 +117,35 @@
                       <tr>
                         <th><input type="checkbox" name="select_all" class="select-all"></th>
                         <th>Sr No</th>
-                        <th>Banner Title</th>
-                        <th>Banner Image</th>
-                        <th>Position</th>
+                        <th>Profile</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                    @php($cnt = $banners->firstItem())
-                    @forelse($banners as $row)
+                    @php($cnt = $users->firstItem())
+                    @forelse($users as $row)
                       <tr id="row-{{ $row->id }}">
                         <td><input type="checkbox" name="select" class="select-row" data-id="{{ $row->id }}"></td>
                         <td>{{ $cnt++ }}</td>
-                        <td>{{ $row->title }}</td>
-                        <td>{!! !empty($row->image_path) ? '<a href="'.asset($row->image_path).'" target="_blank">View</a>' : 'No Image' !!}</td>
-                        <td>{{ $row->position }}</td>
+                        <td>{!! !empty($row->profile_image) ? '<a href="'.asset($row->profile_image).'" target="_blank">View</a>' : 'No Image' !!}</td>
+                        <td>{{ $row->name }}</td>
+                        <td>{{ $row->email }}</td>
+                        <td>
+                          @foreach($row->roles as $role)
+                            {!! '<button class="btn badge bg-primary">'.Str::ucfirst($role->role).'</button>' !!}
+                          @endforeach
+                        </td>
                         <td id="status-{{ $row->id }}">
                           {!! ($row->status == 'y' ? '<button class="btn badge bg-success status" data-id="'.$row->id.'" data-status="'.$row->status.'">Active</button>' : '<button class="btn badge bg-danger status" data-id="'.$row->id.'" data-status="'.$row->status.'">Deactive</button>') !!}
                         </td>
                         <td>
-                          <!-- <button class="btn btn-primary btn-sm"><i class="fas fa-folder"></i> View</button> -->
-                          <button class="btn btn-info btn-sm edit-banner-btn" data-id="{{ $row->id }}"><i class="fas fa-pencil-alt"></i> Edit</button>
-                          <button class="btn btn-danger btn-sm delete-banner-btn" data-toggle="modal" data-target="#modal-delete-banner" data-id="{{ $row->id }}"><i class="fas fa-trash"></i> Delete</button>
+                          <a href="{{ route('admin.user.show', [$row->id]) }}" class="btn btn-primary btn-sm"><i class="fas fa-folder"></i> View</a>
+                          <button class="btn btn-info btn-sm edit-user-btn" data-id="{{ $row->id }}"><i class="fas fa-pencil-alt"></i> Edit</button>
+                          <button class="btn btn-danger btn-sm delete-user-btn" data-toggle="modal" data-target="#modal-delete-user" data-id="{{ $row->id }}"><i class="fas fa-trash"></i> Delete</button>
                         </td>
                       </tr>
                     @empty
@@ -135,7 +157,7 @@
                   </table>
                 </div>
                 <div style="padding: 10px 0">
-                  {{ $banners->onEachSide(2)->links() }}
+                  {{ $users->onEachSide(2)->links() }}
                 </div>
               </div>
               <!-- /.card-body -->
@@ -148,7 +170,7 @@
       <!-- /.container-fluid -->
 
       <!-- modal -->
-      <div class="modal fade" id="modal-delete-banner">
+      <div class="modal fade" id="modal-delete-user">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -161,7 +183,7 @@
               <p>Do you want to delete?</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger m-1" id="delete-banner-cnf">Delete</button>
+              <button type="button" class="btn btn-danger m-1" id="delete-user-cnf">Delete</button>
               <button type="button" class="btn btn-primary m-1" data-dismiss="modal">Cancel</button>
             </div>
           </div>
@@ -191,6 +213,11 @@ $(document).ready(function() {
     toastr.error('{{ Session::get('error') }}');
   @endif
 
+  $("#roles").select2({
+    placeholder: "Select user roles",
+    allowClear: true
+  });
+
   // Select all data
   $(".select-all").click(function() {
     if($(this).prop("checked")) {
@@ -217,7 +244,7 @@ $(document).ready(function() {
   });
 
   // Select data
-  $("#banner-data-container").on("click", ".select-row", function() {
+  $("#user-data-container").on("click", ".select-row", function() {
     if($(this).prop("checked")) {
       if($(this).data("id") && selectedID.includes($(this).data("id")) == false) {
         selectedID.push($(this).data("id"));
@@ -235,12 +262,21 @@ $(document).ready(function() {
   });
 
   // Validate form
-  $("#banner-form").validate({
+  $("#user-form").validate({
+    ignore: ":hidden",
     rules: {
-      banner_title: {
+      full_name: {
         required: true
       },
-      banner_image: {
+      email: {
+        required: true,
+        unique: true
+      },
+      password: {
+        required: true,
+        minlength: 6
+      },
+      "roles[]": {
         required: true
       },
       status: {
@@ -248,12 +284,6 @@ $(document).ready(function() {
       }
     },
     messages: {
-      banner_title: {
-        required: "Please enter a banner title"
-      },
-      banner_image: {
-        required: "Please upload a banner image"
-      },
       status: {
         required: "Please select status"
       }
@@ -271,48 +301,73 @@ $(document).ready(function() {
     }
   });
 
-  $("#banner-form").submit(function() {
-    if($("#banner-form").valid()) {
+  $.validator.addMethod("unique",
+    function(value, element) {
+      var result = false;
+      $.ajax({
+        url: "{{ route('admin.user.get') }}",
+        method: "POST",
+        async: false,
+        data: {email: value, _token: "{{ csrf_token() }}"},
+        success: function(res) {
+          if(res.status == true) {
+            result = res.data[0].id == $("#id").val() ? true : false;
+          } else {
+            result = true;
+          }
+        }
+      });
+      return result;
+    },
+    "Already exists."
+  );
+
+  $("#user-form").submit(function() {
+    if($("#user-form").valid()) {
       //Show preloader
       $.LoadingOverlay("show");
+    } else {
+      console.log('invalid');
     }
   });
 
-  $("#add-banner-btn").click(function() {
+  $("#add-user-btn").click(function() {
     // Show form
-    $("#banner-form-title").html("Add Banner");
-    $("#banner-form").attr("action", "{{ route('admin.banner.store') }}");
-    $("#banner-form").attr("method", "post");
-    $("#banner-form-container").fadeIn();
-    $("#banner-data-container").hide();
+    $("#user-form-title").html("Add Users");
+    $("#user-form").attr("action", "{{ route('admin.user.store') }}");
+    $("#user-form").attr("method", "post");
+    $("#user-form-container").fadeIn();
+    $("#user-data-container").hide();
   });
 
-  $("#close-banner-btn").click(function() {
+  $("#close-user-btn").click(function() {
     // Hide form
-    $("#banner-form-container").hide();
+    $("#user-form-container").hide();
     // Show table container
-    $("#banner-data-container").fadeIn();
-    // Reset form
-    $("#banner-form").trigger("reset");
-    $('#banner-image-preview').hide();
-    $('#banner-image-preview').attr("src", "");
-    $('#banner_image').removeAttr("hidden");
+    $("#user-data-container").fadeIn();
+    // Reset update form
+    $("#user-form").trigger("reset");
+    $('#roles').val([]).trigger('change');
+    $("#password").parent().parent().show();
+    $('#profile-image-preview').hide();
+    $('#profile-image-preview').attr("src", "");
+    $('#profile_image').removeAttr("hidden");
     // Remove error class
     $(".form-group").children(".error").remove();
     $(".form-control").removeClass("is-invalid");
   });
 
-  $(".delete-banner-btn").click(function() {
-    $("#delete-banner-cnf").data("id", $(this).data("id"));
+  $(".delete-user-btn").click(function() {
+    $("#delete-user-cnf").data("id", $(this).data("id"));
   });
 
-  $("#banner-data-container").on("click", ".status", function() {
+  $("#user-data-container").on("click", ".status", function() {
     var id = $(this).data("id");
     var status = $(this).data("status") == "y" ? "n" : "y";
     // Show preloader
     $.LoadingOverlay("show");
     $.ajax({
-      url: "{{ route('admin.banner.update.status') }}",
+      url: "{{ route('admin.user.update.status') }}",
       method: "post",
       data: {id: id, status: status, _token: "{{ csrf_token() }}"},
       success: function(res) {
@@ -333,12 +388,12 @@ $(document).ready(function() {
     });
   });
 
-  $("#banner-data-container").on("click", ".edit-banner-btn", function() {
+  $("#user-data-container").on("click", ".edit-user-btn", function() {
     var id = $(this).data("id");
     // Show preloader
     $.LoadingOverlay("show");
     $.ajax({
-      url: "{{ route('admin.banner.get') }}",
+      url: "{{ route('admin.user.get') }}",
       method: "post",
       data: {id: id, _token: "{{ csrf_token() }}"},
       success: async function(res) {
@@ -350,20 +405,27 @@ $(document).ready(function() {
           return;
         }
         // Show update form
-        $("#banner-form-title").html("Update Banner");
-        $("#banner-form").attr("action", "{{ route('admin.banner.update') }}");
-        $("#banner-form").attr("method", "post");
+        $("#user-form-title").html("Update Users");
+        $("#user-form").attr("action", "{{ route('admin.user.update') }}");
+        $("#user-form").attr("method", "post");
         $("#id").val(res.data[0].id);
-        $("#banner_title").val(res.data[0].title);
-        if(res.data[0].image_path) {
-          $('#banner-image-preview').css("display", "block");
-          $('#banner-image-preview').attr("src", "{{ url('') }}/"+res.data[0].image_path);
-          $("#banner_image").attr("hidden", "true");
+        $("#full_name").val(res.data[0].name);
+        $("#email").val(res.data[0].email);
+        if(res.data[0].profile_image) {
+          $('#profile-image-preview').css("display", "block");
+          $('#profile-image-preview').attr("src", "{{ url('') }}/"+res.data[0].profile_image);
+          $("#profile_image").attr("hidden", "true");
         }
-        $("#position").val(res.data[0].position);
+        if(res.data[0].roles.length > 0) {
+          $("#roles").val(res.data[0].roles.map(function(role) {
+            return role.id;
+          }));
+          $("#roles").trigger('change');
+        }
+        $("#password").parent().parent().hide();
         $("#status").val(res.data[0].status);
-        $("#banner-form-container").fadeIn();
-        $("#banner-data-container").hide();
+        $("#user-form-container").fadeIn();
+        $("#user-data-container").hide();
       },
       error: function(error) {
         // Hide preloader
@@ -373,14 +435,14 @@ $(document).ready(function() {
     });
   });
 
-  $("#delete-banner-cnf").click(function() {
-    $("#modal-delete-banner").modal("toggle");
+  $("#delete-user-cnf").click(function() {
+    $("#modal-delete-user").modal("toggle");
     if($(this).data("id") && selectedID.includes($(this).data("id")) == false) {
       selectedID.push($(this).data("id"));
     }
     // Show preloader
     $.LoadingOverlay("show");
-    let form = $("<form/>", { action: "{{ route('admin.banner.delete') }}", method: "post", enctype: "multipart/form-data" });
+    let form = $("<form/>", { action: "{{ route('admin.user.delete') }}", method: "post", enctype: "multipart/form-data" });
     selectedID.forEach(function(id) {
       form.append($("<input>", { type: "text", name: "id[]", value: id }));
     });
@@ -388,14 +450,14 @@ $(document).ready(function() {
     form.appendTo('body').submit();
   });
 
-  $("#banner_image").change(function() {
-    $('#banner-image-preview').css("display", "block");
-    $('#banner-image-preview').attr("src", window.URL.createObjectURL(this.files[0]));
-    $("#banner_image").attr("hidden", "true");
+  $("#profile_image").change(function() {
+    $('#profile-image-preview').css("display", "block");
+    $('#profile-image-preview').attr("src", window.URL.createObjectURL(this.files[0]));
+    $("#profile_image").attr("hidden", "true");
   });
 
-  $("#banner-image-preview").click(function() {
-    $("#banner_image").click();
+  $("#profile-image-preview").click(function() {
+    $("#profile_image").click();
   });
 });
 

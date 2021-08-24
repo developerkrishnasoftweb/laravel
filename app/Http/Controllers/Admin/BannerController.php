@@ -3,29 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Banner;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller {
     /**
-     * Render banner page.
+     * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request) {
-        $banners = Banner::orderBy('created_at', 'desc')->paginate(20);
+    public function index() {
+        $banners = Banner::latest()->paginate(20);
         return view('admin.pages.banner', ['banners' => $banners]);
     }
 
     /**
-     * Filter banner data.
+     * Filter data of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function filter(Request $request) {
+    public function filter(Request $request) {
         $banners = Banner::query();
         if($request->q) {
             $banners = $banners->where('title', 'like', "%{$request->q}%");
@@ -37,12 +36,12 @@ class BannerController extends Controller {
     }
 
     /**
-     * Get banners data
+     * Get the specified resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function get(Request $request) {
+    public function get(Request $request) {
         //Get category
         $banners = Banner::query();
         if($request->id) {
@@ -62,12 +61,12 @@ class BannerController extends Controller {
     }
 
     /**
-     * Store banners.
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function store(Request $request) {
+    public function store(Request $request) {
         try {
             $request->validate([
                 'banner_title' => 'required',
@@ -92,12 +91,12 @@ class BannerController extends Controller {
     }
 
     /**
-     * Update banners.
+     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function update(Request $request) {
+    public function update(Request $request) {
         try {
             $request->validate([
                 'id' => 'required',
@@ -128,17 +127,18 @@ class BannerController extends Controller {
     }
 
     /**
-     * Update banner status.
+     * Update the status of resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function updateStatus(Request $request) {
+    public function updateStatus(Request $request) {
         try {
             $request->validate([
+                'id' => 'required',
                 'status' => 'required',
             ]);
-            $banner = new Banner();
+            $banner = Banner::findOrFail($request->id);
             $banner->status = $request->status;
             $banner->save();
             return back()->with(['success' => 'Banner updated successfully']);
@@ -148,17 +148,17 @@ class BannerController extends Controller {
     }
 
     /**
-     * Delete banners.
+     * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function delete(Request $request) {
+    public function destroy(Request $request) {
         try {
             $request->validate([
                 'id' => 'required',
             ]);
-            // Delete banner multiple banner
+            // Delete banner multiple banner at once
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {
                 $banner = Banner::findOrFail($id);
