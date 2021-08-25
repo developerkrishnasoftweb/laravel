@@ -114,7 +114,7 @@ class UserController extends Controller {
             }
             $user->save();
             // Attach user roles
-            $user->roles()->attach($request->roles);
+            $user->roles()->attach(Role::whereIn('id', $request->roles)->pluck('id')->toArray());
             return back()->with(['success' => 'User saved successfully']);
         } catch(Exception $e) {
             abort(500);
@@ -151,7 +151,7 @@ class UserController extends Controller {
             }
             $user->save();
             // Attach user roles
-            $user->roles()->sync($request->roles);
+            $user->roles()->sync(Role::whereIn('id', $request->roles)->pluck('id')->toArray());
             return back()->with('success', 'Profile updated successfully.');
         } catch(Exception $e) {
             abort(500);
