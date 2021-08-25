@@ -19,9 +19,13 @@ use App\Http\Controllers\Api\AuthApi;
 
 // Authenticate routes
 Route::post('/login', [AuthApi::class, 'login']);
+Route::post('/signup', [AuthApi::class, 'signup']);
 
 // APIs
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/banners', [BannerApi::class, 'index']);
     Route::get('/testimonials', [TestimonialApi::class, 'index']);
+
+    // Logout
+    Route::post('/logout', [AuthApi::class, 'logout']);
 });

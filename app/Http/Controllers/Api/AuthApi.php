@@ -68,7 +68,7 @@ class AuthApi extends Controller {
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
             ]);
 
@@ -99,7 +99,35 @@ class AuthApi extends Controller {
             $user->save();
             // Attach user roles
             $user->roles()->attach(Role::where('role', 'user')->pluck('id')->toArray());
+            return response()->json([
+                'statusCode' => 200,
+                'data' => $user,
+                'message' => 'Registered successfully'
+            ]);
         } catch(Excepton $e) {
+            return response()->json([
+                'statusCode' => 500,
+                'data' => [],
+                'message' => 'Internal Server Error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Logout current user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request) {
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json([
+                'statusCode' => 200,
+                'data' => [],
+                'message' => 'Logout successfully',
+            ]);
+        } catch(Exception $e) {
             return response()->json([
                 'statusCode' => 500,
                 'data' => [],
