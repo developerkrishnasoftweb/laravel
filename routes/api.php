@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BannerApi;
 use App\Http\Controllers\Api\TestimonialApi;
+use App\Http\Controllers\Api\CategoryApi;
 use App\Http\Controllers\Api\AuthApi;
 
 /*
@@ -24,6 +25,7 @@ Route::post('/signup', [AuthApi::class, 'signup']);
 // APIs
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/banners', [BannerApi::class, 'index']);
+    Route::get('/categories', [CategoryApi::class, 'index']);
     Route::get('/testimonials', [TestimonialApi::class, 'index']);
 
     // Logout

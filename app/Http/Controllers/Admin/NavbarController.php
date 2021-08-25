@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Navbar;
+use Illuminate\Support\Facades\Validator;
 
 class NavbarController extends Controller {
     /**
@@ -84,11 +85,16 @@ class NavbarController extends Controller {
      */
     function store(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'nav_title' => 'required',
                 'nav_url' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $navbar = new Navbar();
             $navbar->title = $request->nav_title;
             $navbar->url = $request->nav_url;
@@ -112,12 +118,17 @@ class NavbarController extends Controller {
      */
     function update(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'nav_title' => 'required',
                 'nav_url' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $navbar = Navbar::findOrFail($request->id);
             $navbar->title = $request->nav_title;
             $navbar->url = $request->nav_url;
@@ -141,10 +152,15 @@ class NavbarController extends Controller {
      */
     function updateStatus(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $navbar = Navbar::findOrFail($request->id);
             $navbar->status = $request->status;
             $navbar->save();
@@ -162,9 +178,14 @@ class NavbarController extends Controller {
      */
     public function destroy(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             // Delete navbar multiple navbar
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {

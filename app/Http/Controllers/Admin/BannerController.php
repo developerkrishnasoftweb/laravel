@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class BannerController extends Controller {
     /**
@@ -15,7 +17,8 @@ class BannerController extends Controller {
      */
     public function index() {
         $banners = Banner::latest()->paginate(20);
-        return view('admin.pages.banner', ['banners' => $banners]);
+        $projects = Project::all();
+        return view('admin.pages.banner', ['banners' => $banners, 'projects' => $projects]);
     }
 
     /**
@@ -32,7 +35,8 @@ class BannerController extends Controller {
         $banners = $banners->orderBy('position')
             ->paginate(20)
             ->appends($request->query());
-        return view('admin.pages.banner', ['banners' => $banners]);
+        $projects = Project::all();
+        return view('admin.pages.banner', ['banners' => $banners, 'projects' => $projects]);
     }
 
     /**
@@ -68,13 +72,22 @@ class BannerController extends Controller {
      */
     public function store(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'banner_title' => 'required',
                 'banner_image' => 'required',
+                'link_url' => 'required',
+                'link_url_type' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $banner = new Banner();
             $banner->title = $request->banner_title;
+            $banner->url = $request->link_url;
+            $banner->url_type = $request->link_url_type;
             if($request->hasFile('banner_image')) {
                 // Generate new unique file name
                 $newFileName = 'banner-'.rand(1000000, 9999999).'-'.$request->file('banner_image')->getClientOriginalName();
@@ -98,13 +111,22 @@ class BannerController extends Controller {
      */
     public function update(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'banner_title' => 'required',
+                'link_url' => 'required',
+                'link_url_type' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $banner = Banner::findOrFail($request->id);
             $banner->title = $request->banner_title;
+            $banner->url = $request->link_url;
+            $banner->url_type = $request->link_url_type;
             if($request->hasFile('banner_image')) {
                 // Old file path
                 $oldFile = $banner->image_path;
@@ -134,10 +156,15 @@ class BannerController extends Controller {
      */
     public function updateStatus(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $banner = Banner::findOrFail($request->id);
             $banner->status = $request->status;
             $banner->save();
@@ -159,9 +186,14 @@ class BannerController extends Controller {
      */
     public function destroy(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             // Delete banner multiple banner at once
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {

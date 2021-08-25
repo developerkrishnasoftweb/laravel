@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class TestimonialController extends Controller {
     /**
@@ -68,14 +69,21 @@ class TestimonialController extends Controller {
      */
     public function store(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'testimonial_title' => 'required',
-                'url' => 'required',
+                'person_name' => 'required',
+                'video_url' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $testimonial = new Testimonial();
             $testimonial->title = $request->testimonial_title;
-            $testimonial->url = $request->url;
+            $testimonial->url = $request->video_url;
+            $testimonial->name = $request->person_name;
             $testimonial->position = $request->position;
             $testimonial->status = $request->status;
             $testimonial->save();
@@ -93,15 +101,22 @@ class TestimonialController extends Controller {
      */
     public function update(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'testimonial_title' => 'required',
-                'url' => 'required',
+                'person_name' => 'required',
+                'video_url' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $testimonial = Testimonial::findOrFail($request->id);
             $testimonial->title = $request->testimonial_title;
-            $testimonial->url = $request->url;
+            $testimonial->url = $request->video_url;
+            $testimonial->name = $request->person_name;
             $testimonial->position = $request->position;
             $testimonial->status = $request->status;
             $testimonial->save();
@@ -119,10 +134,15 @@ class TestimonialController extends Controller {
      */
     public function updateStatus(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $testimonial = Testimonial::findOrFail($request->id);
             $testimonial->status = $request->status;
             $testimonial->save();
@@ -144,9 +164,14 @@ class TestimonialController extends Controller {
      */
     public function destroy(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             // Delete testimonial multiple testimonial at once
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {

@@ -7,12 +7,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Banners</h1>
+            <h1>Categories</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-              <li class="breadcrumb-item active">Banners</li>
+              <li class="breadcrumb-item active">Categories</li>
             </ol>
           </div>
         </div>
@@ -26,47 +26,21 @@
           <!-- left column -->
           <div class="col-md-12">
             <!-- jquery validation -->
-            <div class="card card-primary" id="banner-form-container" style="display:none">
+            <div class="card card-primary" id="category-form-container" style="display:none">
               <div class="card-header">
-                <h4 class="card-title" id="banner-form-title">Add Banner</h4>
+                <h4 class="card-title" id="category-form-title">Add Category</h4>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form" id="banner-form" enctype="multipart/form-data">
+              <form role="form" id="category-form" enctype="multipart/form-data">
                 @csrf
                 <input type="text" name="id" id="id" value="" hidden>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="banner_title">Banner Title</label>
-                        <input type="text" name="banner_title" class="form-control" id="banner_title" placeholder="Enter banner title">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="banner_image">Banner Image</label>
-                        <img src="" id="banner-image-preview" style="display:none; height: 50px;"/>
-                        <input type="file" class="form-control" name="banner_image" id="banner_image" onchange="validateImageFile(this)" accept="image/*">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="link_url_type">Link Type</label>
-                        <select name="link_url_type" class="form-control" id="link_url_type">
-                          <option value="project">Project</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="link_url">Select Project</label>
-                        <select name="link_url" class="form-control" id="link_url">
-                          <option value="">Select Project</option>
-                          @foreach($projects as $row)
-                            <option value="{{ $row->id }}">{{ $row->title }}</option>
-                          @endforeach
-                        </select>
+                        <label for="category_name">Category Name</label>
+                        <input type="text" name="category_name" class="form-control" id="category_name" placeholder="Enter category name">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -89,26 +63,26 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <button type="submit" class="btn btn-primary m-1">Submit</button>
-                  <button type="button" class="btn btn-danger m-1" id="close-banner-btn">Cancel</button>
+                  <button type="button" class="btn btn-danger m-1" id="close-category-btn">Cancel</button>
                 </div>
               </form>
             </div>
             <!-- /.card -->
 
-            <div class="card" id="banner-data-container">
+            <div class="card" id="category-data-container">
               <div class="card-header">
-                <h3 class="card-title">Manage Banners</h3>
+                <h3 class="card-title">Manage Categories</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-6 col-md-6">
-                    <button class="btn btn-primary" id="add-banner-btn"><i class="fa fa-plus"></i> Add Banner</button>
-                    <button class="btn btn-danger" id="delete-selected-btn" style="display: none" data-toggle="modal" data-target="#modal-delete-banner"><i class="fa fa-trash"></i> Delete</button>
+                    <button class="btn btn-primary" id="add-category-btn"><i class="fa fa-plus"></i> Add Category</button>
+                    <button class="btn btn-danger" id="delete-selected-btn" style="display: none" data-toggle="modal" data-target="#modal-delete-category"><i class="fa fa-trash"></i> Delete</button>
                   </div>
                   <div class="col-md-4"></div>
                   <div class="col-md-2">
-                    <form method="get" action="{{ route('admin.banner.filter') }}">
+                    <form method="get" action="{{ route('admin.category.filter') }}">
                       <input type="text" name="q" class="form-control" id="product_name" placeholder="Search..." value="{{ request()->q }}">
                     </form>
                   </div>
@@ -120,31 +94,27 @@
                       <tr>
                         <th><input type="checkbox" name="select_all" class="select-all"></th>
                         <th>Sr No</th>
-                        <th>Banner Title</th>
-                        <th>Banner Image</th>
-                        <th>Link Type</th>
+                        <th>Category Name</th>
                         <th>Position</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                    @php($cnt = $banners->firstItem())
-                    @forelse($banners as $row)
+                    @php($cnt = $categories->firstItem())
+                    @forelse($categories as $row)
                       <tr id="row-{{ $row->id }}">
                         <td><input type="checkbox" name="select" class="select-row" data-id="{{ $row->id }}"></td>
                         <td>{{ $cnt++ }}</td>
-                        <td>{{ $row->title }}</td>
-                        <td>{!! !empty($row->image_path) ? '<a href="'.asset($row->image_path).'" target="_blank">View</a>' : 'No Image' !!}</td>
-                        <td>{{ $row->url_type }}</td>
+                        <td>{{ $row->name }}</td>
                         <td>{{ $row->position }}</td>
                         <td id="status-{{ $row->id }}">
                           {!! ($row->status == 'y' ? '<button class="btn badge bg-success status" data-id="'.$row->id.'" data-status="'.$row->status.'">Active</button>' : '<button class="btn badge bg-danger status" data-id="'.$row->id.'" data-status="'.$row->status.'">Deactive</button>') !!}
                         </td>
                         <td>
                           <!-- <button class="btn btn-primary btn-sm"><i class="fas fa-folder"></i> View</button> -->
-                          <button class="btn btn-info btn-sm edit-banner-btn" data-id="{{ $row->id }}"><i class="fas fa-pencil-alt"></i> Edit</button>
-                          <button class="btn btn-danger btn-sm delete-banner-btn" data-toggle="modal" data-target="#modal-delete-banner" data-id="{{ $row->id }}"><i class="fas fa-trash"></i> Delete</button>
+                          <button class="btn btn-info btn-sm edit-category-btn" data-id="{{ $row->id }}"><i class="fas fa-pencil-alt"></i> Edit</button>
+                          <button class="btn btn-danger btn-sm delete-category-btn" data-toggle="modal" data-target="#modal-delete-category" data-id="{{ $row->id }}"><i class="fas fa-trash"></i> Delete</button>
                         </td>
                       </tr>
                     @empty
@@ -156,7 +126,7 @@
                   </table>
                 </div>
                 <div style="padding: 10px 0">
-                  {{ $banners->onEachSide(2)->links() }}
+                  {{ $categories->onEachSide(2)->links() }}
                 </div>
               </div>
               <!-- /.card-body -->
@@ -169,7 +139,7 @@
       <!-- /.container-fluid -->
 
       <!-- modal -->
-      <div class="modal fade" id="modal-delete-banner">
+      <div class="modal fade" id="modal-delete-category">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -182,7 +152,7 @@
               <p>Do you want to delete?</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger m-1" id="delete-banner-cnf">Delete</button>
+              <button type="button" class="btn btn-danger m-1" id="delete-category-cnf">Delete</button>
               <button type="button" class="btn btn-primary m-1" data-dismiss="modal">Cancel</button>
             </div>
           </div>
@@ -238,7 +208,7 @@ $(document).ready(function() {
   });
 
   // Select data
-  $("#banner-data-container").on("click", ".select-row", function() {
+  $("#category-data-container").on("click", ".select-row", function() {
     if($(this).prop("checked")) {
       if($(this).data("id") && selectedID.includes($(this).data("id")) == false) {
         selectedID.push($(this).data("id"));
@@ -256,18 +226,9 @@ $(document).ready(function() {
   });
 
   // Validate form
-  $("#banner-form").validate({
+  $("#category-form").validate({
     rules: {
-      banner_title: {
-        required: true
-      },
-      banner_image: {
-        required: true
-      },
-      link_url_type: {
-        required: true
-      },
-      link_url: {
+      category_name: {
         required: true
       },
       status: {
@@ -292,48 +253,45 @@ $(document).ready(function() {
     }
   });
 
-  $("#banner-form").submit(function() {
-    if($("#banner-form").valid()) {
+  $("#category-form").submit(function() {
+    if($("#category-form").valid()) {
       //Show preloader
       $.LoadingOverlay("show");
     }
   });
 
-  $("#add-banner-btn").click(function() {
+  $("#add-category-btn").click(function() {
     // Show form
-    $("#banner-form-title").html("Add Banner");
-    $("#banner-form").attr("action", "{{ route('admin.banner.store') }}");
-    $("#banner-form").attr("method", "post");
-    $("#banner-form-container").fadeIn();
-    $("#banner-data-container").hide();
+    $("#category-form-title").html("Add Category");
+    $("#category-form").attr("action", "{{ route('admin.category.store') }}");
+    $("#category-form").attr("method", "post");
+    $("#category-form-container").fadeIn();
+    $("#category-data-container").hide();
   });
 
-  $("#close-banner-btn").click(function() {
+  $("#close-category-btn").click(function() {
     // Hide form
-    $("#banner-form-container").hide();
+    $("#category-form-container").hide();
     // Show table container
-    $("#banner-data-container").fadeIn();
+    $("#category-data-container").fadeIn();
     // Reset form
-    $("#banner-form").trigger("reset");
-    $('#banner-image-preview').hide();
-    $('#banner-image-preview').attr("src", "");
-    $('#banner_image').removeAttr("hidden");
+    $("#category-form").trigger("reset");
     // Remove error class
     $(".form-group").children(".error").remove();
     $(".form-control").removeClass("is-invalid");
   });
 
-  $(".delete-banner-btn").click(function() {
-    $("#delete-banner-cnf").data("id", $(this).data("id"));
+  $(".delete-category-btn").click(function() {
+    $("#delete-category-cnf").data("id", $(this).data("id"));
   });
 
-  $("#banner-data-container").on("click", ".status", function() {
+  $("#category-data-container").on("click", ".status", function() {
     var id = $(this).data("id");
     var status = $(this).data("status") == "y" ? "n" : "y";
     // Show preloader
     $.LoadingOverlay("show");
     $.ajax({
-      url: "{{ route('admin.banner.update.status') }}",
+      url: "{{ route('admin.category.update.status') }}",
       method: "post",
       data: {id: id, status: status, _token: "{{ csrf_token() }}"},
       success: function(res) {
@@ -354,12 +312,12 @@ $(document).ready(function() {
     });
   });
 
-  $("#banner-data-container").on("click", ".edit-banner-btn", function() {
+  $("#category-data-container").on("click", ".edit-category-btn", function() {
     var id = $(this).data("id");
     // Show preloader
     $.LoadingOverlay("show");
     $.ajax({
-      url: "{{ route('admin.banner.get') }}",
+      url: "{{ route('admin.category.get') }}",
       method: "post",
       data: {id: id, _token: "{{ csrf_token() }}"},
       success: async function(res) {
@@ -371,22 +329,15 @@ $(document).ready(function() {
           return;
         }
         // Show update form
-        $("#banner-form-title").html("Update Banner");
-        $("#banner-form").attr("action", "{{ route('admin.banner.update') }}");
-        $("#banner-form").attr("method", "post");
+        $("#category-form-title").html("Update Category");
+        $("#category-form").attr("action", "{{ route('admin.category.update') }}");
+        $("#category-form").attr("method", "post");
         $("#id").val(res.data[0].id);
-        $("#banner_title").val(res.data[0].title);
-        $("#link_url_type").val(res.data[0].url_type);
-        $("#link_url").val(res.data[0].url);
-        if(res.data[0].image_path) {
-          $('#banner-image-preview').css("display", "block");
-          $('#banner-image-preview').attr("src", "{{ url('') }}/"+res.data[0].image_path);
-          $("#banner_image").attr("hidden", "true");
-        }
+        $("#category_name").val(res.data[0].name);
         $("#position").val(res.data[0].position);
         $("#status").val(res.data[0].status);
-        $("#banner-form-container").fadeIn();
-        $("#banner-data-container").hide();
+        $("#category-form-container").fadeIn();
+        $("#category-data-container").hide();
       },
       error: function(error) {
         // Hide preloader
@@ -396,52 +347,20 @@ $(document).ready(function() {
     });
   });
 
-  $("#delete-banner-cnf").click(function() {
-    $("#modal-delete-banner").modal("toggle");
+  $("#delete-category-cnf").click(function() {
+    $("#modal-delete-category").modal("toggle");
     if($(this).data("id") && selectedID.includes($(this).data("id")) == false) {
       selectedID.push($(this).data("id"));
     }
     // Show preloader
     $.LoadingOverlay("show");
-    let form = $("<form/>", { action: "{{ route('admin.banner.delete') }}", method: "post", enctype: "multipart/form-data" });
+    let form = $("<form/>", { action: "{{ route('admin.category.delete') }}", method: "post", enctype: "multipart/form-data" });
     selectedID.forEach(function(id) {
       form.append($("<input>", { type: "text", name: "id[]", value: id }));
     });
     form.append($("<input>", { type: "text", name: "_token", value: "{{ csrf_token() }}" }));
     form.appendTo('body').submit();
   });
-
-  $("#banner_image").change(function() {
-    $('#banner-image-preview').css("display", "block");
-    $('#banner-image-preview').attr("src", window.URL.createObjectURL(this.files[0]));
-    $("#banner_image").attr("hidden", "true");
-  });
-
-  $("#banner-image-preview").click(function() {
-    $("#banner_image").click();
-  });
 });
-
-// Check image file is valid or not
-function validateImageFile(input) {
-  var URL = window.URL || window.webkitURL;
-  var file = input.files[0];
-  if(file) {
-    var image = new Image();
-    image.src = URL.createObjectURL(file);
-    image.onload = function() {
-      if(this.width) {
-        // alert('valid file');
-      } else {
-        alert('Image file is not valid');
-        input.value = "";
-      }
-    };
-    image.onerror = function(ev) {
-      alert('Image file is not valid');
-      input.value = "";
-    }
-  }
-}
 </script>
 @endpush

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
@@ -43,6 +45,24 @@ Route::prefix('admin')->middleware(['auth'])->group(function() {
     Route::post('/testimonial/update', [TestimonialController::class, 'update'])->name('admin.testimonial.update');
     Route::post('/testimonial/update-status', [TestimonialController::class, 'updateStatus'])->name('admin.testimonial.update.status');
     Route::post('/testimonial/delete', [TestimonialController::class, 'destroy'])->name('admin.testimonial.delete');
+
+    // Brands
+    Route::get('/brand', [BrandController::class, 'index'])->name('admin.brand');
+    Route::get('/brand/filter', [BrandController::class, 'filter'])->name('admin.brand.filter');
+    Route::post('/brand/get', [BrandController::class, 'get'])->name('admin.brand.get');
+    Route::post('/brand', [BrandController::class, 'store'])->name('admin.brand.store');
+    Route::post('/brand/update', [BrandController::class, 'update'])->name('admin.brand.update');
+    Route::post('/brand/update-status', [BrandController::class, 'updateStatus'])->name('admin.brand.update.status');
+    Route::post('/brand/delete', [BrandController::class, 'destroy'])->name('admin.brand.delete');
+
+    // Categories
+    Route::get('/category', [CategoryController::class, 'index'])->name('admin.category');
+    Route::get('/category/filter', [CategoryController::class, 'filter'])->name('admin.category.filter');
+    Route::post('/category/get', [CategoryController::class, 'get'])->name('admin.category.get');
+    Route::post('/category', [CategoryController::class, 'store'])->name('admin.category.store');
+    Route::post('/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::post('/category/update-status', [CategoryController::class, 'updateStatus'])->name('admin.category.update.status');
+    Route::post('/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.delete');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->middleware(['password.confirm'])->name('admin.profile');

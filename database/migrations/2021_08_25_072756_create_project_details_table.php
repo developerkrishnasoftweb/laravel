@@ -4,20 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBannersTable extends Migration {
+class CreateProjectDetailsTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up() {
-        Schema::create('banners', function (Blueprint $table) {
+        Schema::create('project_details', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('image_path');
-            $table->text('url');
-            $table->text('url_type');
-            $table->integer('position')->nullable();
+            $table->text('description');
+            $table->integer('project_id');
             $table->string('status', 10)->default('y');
             $table->timestamps();
         });
@@ -29,6 +27,6 @@ class CreateBannersTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('banners');
+        Schema::dropIfExists('project_details');
     }
 }

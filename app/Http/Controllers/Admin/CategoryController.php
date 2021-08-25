@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class RoleController extends Controller {
+class CategoryController extends Controller {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $roles = Role::latest()->paginate(20);
-        return view('admin.pages.user.role', ['roles' => $roles]);
+        $categories = Category::latest()->paginate(20);
+        return view('admin.pages.category', ['categories' => $categories]);
     }
 
     /**
@@ -26,14 +26,14 @@ class RoleController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function filter(Request $request) {
-        $roles = Role::query();
+        $categories = Category::query();
         if($request->q) {
-            $roles = $roles->where('role', 'like', "%{$request->q}%");
+            $categories = $categories->where('name', 'like', "%{$request->q}%");
         }
-        $roles = $roles->latest()
+        $categories = $categories->orderBy('position')
             ->paginate(20)
             ->appends($request->query());
-        return view('admin.pages.user.role', ['roles' => $roles]);
+        return view('admin.pages.category', ['categories' => $categories]);
     }
 
     /**
@@ -44,15 +44,15 @@ class RoleController extends Controller {
      */
     public function get(Request $request) {
         //Get category
-        $roles = Role::query();
+        $categories = Category::query();
         if($request->id) {
-            $roles = $roles->where('id', $request->id);
+            $categories = $categories->where('id', $request->id);
         }
-        $roles = $roles->get();
-        if($roles->isNotEmpty()) {
+        $categories = $categories->get();
+        if($categories->isNotEmpty()) {
             $res['status'] = true;
             $res['message'] = 'Data found';
-            $res['data'] = $roles->toArray();
+            $res['data'] = $categories;
         } else {
             $res['status'] = false;
             $res['message'] = 'Data not found';
@@ -70,8 +70,7 @@ class RoleController extends Controller {
     public function store(Request $request) {
         try {
             $validator = Validator::make($request->all(), [
-                'role_title' => 'required',
-                'banner_image' => 'required',
+                'category_name' => 'required',
                 'status' => 'required',
             ]);
 
@@ -79,12 +78,12 @@ class RoleController extends Controller {
                 return back()->with(['error' => $validator->errors()->first()]);
             }
 
-            $role = new Role();
-            $role->role = $request->role_title;
-            $role->description = $request->description;
-            $role->status = $request->status;
-            $role->save();
-            return back()->with(['success' => 'Role saved successfully']);
+            $category = new Category();
+            $category->name = $request->category_name;
+            $category->position = $request->position;
+            $category->status = $request->status;
+            $category->save();
+            return back()->with(['success' => 'Category saved successfully']);
         } catch(Exception $e) {
             abort(500);
         }
@@ -100,7 +99,7 @@ class RoleController extends Controller {
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'role_title' => 'required',
+                'category_name' => 'required',
                 'status' => 'required',
             ]);
 
@@ -108,12 +107,11 @@ class RoleController extends Controller {
                 return back()->with(['error' => $validator->errors()->first()]);
             }
 
-            $role = Role::findOrFail($request->id);
-            $role->role = $request->role_title;
-            $role->description = $request->description;
-            $role->status = $request->status;
-            $role->save();
-            return back()->with(['success' => 'Role updated successfully']);
+            $category = Category::findOrFail($request->id);
+            $category->name = $request->category_name;
+            $category->status = $request->status;
+            $category->save();
+            return back()->with(['success' => 'Category updated successfully']);
         } catch(Exception $e) {
             abort(500);
         }
@@ -136,9 +134,9 @@ class RoleController extends Controller {
                 return back()->with(['error' => $validator->errors()->first()]);
             }
 
-            $role = Role::findOrFail($request->id);
-            $role->status = $request->status;
-            $role->save();
+            $category = Category::findOrFail($request->id);
+            $category->status = $request->status;
+            $category->save();
             return response()->json([
                 'status' => true,
                 'data' => [],
@@ -165,12 +163,12 @@ class RoleController extends Controller {
                 return back()->with(['error' => $validator->errors()->first()]);
             }
 
-            // Delete role multiple role at once
+            // Delete category multiple category at once
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {
-                $role = Role::findOrFail($id)->delete();
+                $category = Category::findOrFail($id)->delete();
             }
-            return back()->with('success', 'Role deleted successfully');
+            return back()->with('success', 'Category deleted successfully');
         } catch(Exception $e) {
             abort(500);
         }

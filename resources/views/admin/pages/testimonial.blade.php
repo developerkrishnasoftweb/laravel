@@ -45,8 +45,14 @@
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="url">Testimonial URL</label>
-                        <input type="text" name="url" class="form-control" id="url" placeholder="Enter testimonial url">
+                        <label for="person_name">Person Name</label>
+                        <input type="text" name="person_name" class="form-control" id="person_name" placeholder="Enter person name">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="video_url">Video URL</label>
+                        <input type="text" name="video_url" class="form-control" id="video_url" placeholder="Enter video url">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -101,7 +107,8 @@
                         <th><input type="checkbox" name="select_all" class="select-all"></th>
                         <th>Sr No</th>
                         <th>Testimonial Title</th>
-                        <th>Testimonial URL</th>
+                        <th>Video URL</th>
+                        <th>Person Name</th>
                         <th>Position</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -115,6 +122,7 @@
                         <td>{{ $cnt++ }}</td>
                         <td>{{ $row->title }}</td>
                         <td>{{ $row->url }}</td>
+                        <td>{{ $row->name }}</td>
                         <td>{{ $row->position }}</td>
                         <td id="status-{{ $row->id }}">
                           {!! ($row->status == 'y' ? '<button class="btn badge bg-success status" data-id="'.$row->id.'" data-status="'.$row->status.'">Active</button>' : '<button class="btn badge bg-danger status" data-id="'.$row->id.'" data-status="'.$row->status.'">Deactive</button>') !!}
@@ -127,7 +135,7 @@
                       </tr>
                     @empty
                       <tr>
-                        <td colspan="7" style="text-align:center">No data available in table</td>
+                        <td colspan="8" style="text-align:center">No data available in table</td>
                       </tr>
                     @endforelse
                     </tbody>
@@ -239,7 +247,10 @@ $(document).ready(function() {
       testimonial_title: {
         required: true
       },
-      url: {
+      video_url: {
+        required: true
+      },
+      person_name: {
         required: true
       },
       status: {
@@ -345,7 +356,8 @@ $(document).ready(function() {
         $("#testimonial-form").attr("method", "post");
         $("#id").val(res.data[0].id);
         $("#testimonial_title").val(res.data[0].title);
-        $("#url").val(res.data[0].url);
+        $("#video_url").val(res.data[0].url);
+        $("#person_name").val(res.data[0].name);
         $("#position").val(res.data[0].position);
         $("#status").val(res.data[0].status);
         $("#testimonial-form-container").fadeIn();

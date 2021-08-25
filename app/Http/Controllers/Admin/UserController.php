@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller {
     /**
@@ -90,12 +91,17 @@ class UserController extends Controller {
      */
     public function store(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'full_name' => 'required',
                 'email' => 'required|email',
                 'password' => 'required|min:6',
                 'roles' => 'required|array',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $user = new User();
             $user->name = $request->full_name;
             $user->email = $request->email;
@@ -129,11 +135,16 @@ class UserController extends Controller {
      */
     public function update(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'full_name' => 'required',
                 'email' => 'required|email',
                 'roles' => 'required|array',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $user = User::findOrFail($request->id);
             $user->name = $request->full_name;
             $user->email = $request->email;
@@ -166,10 +177,15 @@ class UserController extends Controller {
      */
     public function updateStatus(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'status' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             $user = User::findOrFail($request->id);
             $user->status = $request->status;
             $user->save();
@@ -191,9 +207,14 @@ class UserController extends Controller {
      */
     public function destroy(Request $request) {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'id' => 'required',
             ]);
+
+            if($validator->stopOnFirstFailure()->fails()) {
+                return back()->with(['error' => $validator->errors()->first()]);
+            }
+
             // Delete user multiple user at once
             $ids = (array) $request->id ?? [];
             foreach($ids as $id) {
