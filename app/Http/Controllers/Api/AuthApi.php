@@ -22,7 +22,7 @@ class AuthApi extends Controller {
                 'password' => 'required',
             ]);
 
-            if ($validator->fails()) {
+            if($validator->fails()) {
                 return response()->json([
                     'statusCode' => 400,
                     'data' => [],
@@ -39,7 +39,7 @@ class AuthApi extends Controller {
                     'message' => 'Invalid email or password',
                 ], 401);
             }
-            $token = $user->createToken($request->email)->plainTextToken;
+            $token = $user->createToken($request->ip())->plainTextToken;
             return response()->json([
                 'statusCode' => 200,
                 'data' => [
