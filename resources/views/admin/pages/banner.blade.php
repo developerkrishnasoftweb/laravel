@@ -319,7 +319,7 @@ $(document).ready(function() {
         // Hide preloader
         $.LoadingOverlay("hide");
         if(res.status == true) {
-          $("#status-"+id).html('<button class="badge bg-'+(status == 'y' ? 'success' : 'danger')+' status" data-id="'+id+'" data-status="'+status+'">'+(status == 'y' ? 'Active' : 'Deactive')+'</button>');
+          $("#status-"+id).html('<button class="btn badge bg-'+(status == 'y' ? 'success' : 'danger')+' status" data-id="'+id+'" data-status="'+status+'">'+(status == 'y' ? 'Active' : 'Deactive')+'</button>');
           toastr.success('Status updated successfully.');
         } else {
           toastr.error('Status not updated.');

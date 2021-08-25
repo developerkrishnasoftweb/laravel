@@ -141,7 +141,11 @@ class BannerController extends Controller {
             $banner = Banner::findOrFail($request->id);
             $banner->status = $request->status;
             $banner->save();
-            return back()->with(['success' => 'Banner updated successfully']);
+            return response()->json([
+                'status' => true,
+                'data' => [],
+                'message' => 'Status updated successfully'
+            ]);
         } catch(Exception $e) {
             abort(500);
         }

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\NavbarController;
@@ -25,13 +26,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'index'])->middleware(['password.confirm'])->name('admin.profile');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('admin.profile');
-    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.profile.changePassword');
-    Route::get('/confirm-password', [AuthController::class, 'confirmPassword'])->name('password.confirm');
-    Route::post('/confirm-password', [AuthController::class, 'verifyConfirmPassword'])->name('password.confirm');
-
     // Banners
     Route::get('/banner', [BannerController::class, 'index'])->name('admin.banner');
     Route::get('/banner/filter', [BannerController::class, 'filter'])->name('admin.banner.filter');
@@ -40,6 +34,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function() {
     Route::post('/banner/update', [BannerController::class, 'update'])->name('admin.banner.update');
     Route::post('/banner/update-status', [BannerController::class, 'updateStatus'])->name('admin.banner.update.status');
     Route::post('/banner/delete', [BannerController::class, 'destroy'])->name('admin.banner.delete');
+
+    // Testimonials
+    Route::get('/testimonial', [TestimonialController::class, 'index'])->name('admin.testimonial');
+    Route::get('/testimonial/filter', [TestimonialController::class, 'filter'])->name('admin.testimonial.filter');
+    Route::post('/testimonial/get', [TestimonialController::class, 'get'])->name('admin.testimonial.get');
+    Route::post('/testimonial', [TestimonialController::class, 'store'])->name('admin.testimonial.store');
+    Route::post('/testimonial/update', [TestimonialController::class, 'update'])->name('admin.testimonial.update');
+    Route::post('/testimonial/update-status', [TestimonialController::class, 'updateStatus'])->name('admin.testimonial.update.status');
+    Route::post('/testimonial/delete', [TestimonialController::class, 'destroy'])->name('admin.testimonial.delete');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'index'])->middleware(['password.confirm'])->name('admin.profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('admin.profile');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.profile.changePassword');
+    Route::get('/confirm-password', [AuthController::class, 'confirmPassword'])->name('password.confirm');
+    Route::post('/confirm-password', [AuthController::class, 'verifyConfirmPassword'])->name('password.confirm');
 
     // Users
     Route::get('/user', [UserController::class, 'index'])->name('admin.user');

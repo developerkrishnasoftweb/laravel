@@ -13,7 +13,7 @@ class NavbarController extends Controller {
      * @return \Illuminate\Http\Response
      */
     function index(Request $request) {
-        $navbars = Navbar::orderBy('position')->paginate(20);
+        $navbars = Navbar::where('parent_nav_id', 0)->orderBy('position')->paginate(20);
         return view('admin.pages.navbar.navmenu', ['navbars' => $navbars]);
     }
 

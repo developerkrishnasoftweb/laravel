@@ -173,7 +173,11 @@ class UserController extends Controller {
             $user = User::findOrFail($request->id);
             $user->status = $request->status;
             $user->save();
-            return back()->with(['success' => 'User updated successfully']);
+            return response()->json([
+                'status' => true,
+                'data' => [],
+                'message' => 'Status updated successfully'
+            ]);
         } catch(Exception $e) {
             abort(500);
         }

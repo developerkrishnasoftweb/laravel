@@ -12,6 +12,7 @@ class NavbarSeeder extends Seeder {
      * @return void
      */
     public function run() {
+        // Create static data
         Navbar::factory()->create([
             'title' => 'Dashboard',
             'url' => '/admin/dashboard',
@@ -55,6 +56,15 @@ class NavbarSeeder extends Seeder {
             'parent_nav_id' => 3,
             'nav_type' => 'menu',
             'position' => 1,
+            'status' => 'y',
+        ]);
+        Navbar::factory()->create([
+            'title' => 'Testimonials',
+            'url' => '/admin/testimonial',
+            'icon' => 'fas fa-th',
+            'parent_nav_id' => 0,
+            'nav_type' => 'menu',
+            'position' => 3,
             'status' => 'y',
         ]);
     }

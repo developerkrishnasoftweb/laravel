@@ -16,13 +16,19 @@ class BannerApi extends Controller {
         try {
             $banners = Banner::latest()->paginate(20);
             return response()->json([
-                'status' => $banners->isNotEmpty(),
-                'data' => $banners->getCollection(),
-                'message' => 'Data found'
+                'statusCode' => $banners->isNotEmpty() ? 200 : 204,
+                'data' => $banners->items(),
+                'pagination' => [
+                    'currentPage' => $banners->currentPage(),
+                    'totalPage' => $banners->lastPage(),
+                    'totalItemCount' => $banners->count(),
+                    'currentPageItemCount' => $banners->total()
+                ],
+                'message' => $banners->isNotEmpty() ? 'Data found' : 'Data not found',
             ]);
         } catch(Excepton $e) {
             return response()->json([
-                'status' => false,
+                'statusCode' => 500,
                 'data' => [],
                 'message' => 'Internal Server Error'
             ], 500);

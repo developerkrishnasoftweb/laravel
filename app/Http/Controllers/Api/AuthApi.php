@@ -21,27 +21,27 @@ class AuthApi extends Controller {
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-    
+
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false,
+                    'statusCode' => 400,
                     'data' => [],
                     'message' => $validator->errors(),
-                ],400);
+                ], 400);
             }
 
             // Authenticate user credentials
             $user = User::where('email', $request->email)->first();
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
-                    'status' => false,
+                    'statusCode' => 401,
                     'data' => [],
                     'message' => 'Invalid email or password',
-                ],400);
+                ], 401);
             }
             $token = $user->createToken($request->email)->plainTextToken;
             return response()->json([
-                'status' => true,
+                'statusCode' => 200,
                 'data' => [
                     'token' => $token
                 ],
@@ -49,7 +49,7 @@ class AuthApi extends Controller {
             ]);
         } catch(Excepton $e) {
             return response()->json([
-                'status' => false,
+                'statusCode' => 500,
                 'data' => [],
                 'message' => 'Internal Server Error'
             ], 500);

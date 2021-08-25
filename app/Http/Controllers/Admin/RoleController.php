@@ -123,7 +123,11 @@ class RoleController extends Controller {
             $role = Role::findOrFail($request->id);
             $role->status = $request->status;
             $role->save();
-            return back()->with(['success' => 'Role updated successfully']);
+            return response()->json([
+                'status' => true,
+                'data' => [],
+                'message' => 'Status updated successfully'
+            ]);
         } catch(Exception $e) {
             abort(500);
         }

@@ -126,7 +126,11 @@ class TestimonialController extends Controller {
             $testimonial = Testimonial::findOrFail($request->id);
             $testimonial->status = $request->status;
             $testimonial->save();
-            return back()->with(['success' => 'Testimonial updated successfully']);
+            return response()->json([
+                'status' => true,
+                'data' => [],
+                'message' => 'Status updated successfully'
+            ]);
         } catch(Exception $e) {
             abort(500);
         }
